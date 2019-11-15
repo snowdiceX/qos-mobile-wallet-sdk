@@ -1,23 +1,33 @@
 package account
 
-import "encoding/binary"
+import (
+	"github.com/QOSGroup/qos-mobile-wallet-sdk/types"
+)
 
 var (
-	accountIndexKey = []byte("AccountIndex")
-	accountPrefix = []byte("account:")
-	accountNamePrefixKey = []byte("account-name:")
+	accountIndexKey      = []byte("AccountIndex") //value: id
+	accountPrefixKey     = []byte("acc:")         //key: acc:[id] value: account
+	accountNamePrefixKey = []byte("acc-name:")    //key: acc-name:[name] value: id
+	accountAddrPrefixKey = []byte("acc-addr:")    //key: acc-addr:[addr] value: id
+	accountSaltPrefixKey = []byte("acc-salt:")    //key: acc-salt:[id] value: salt
 )
 
 func AccountIndexKey() []byte {
 	return accountIndexKey
 }
 
-func AccountKey(index uint64) []byte {
-	bz := make([]byte, 0, 8)
-	binary.BigEndian.PutUint64(bz, index)
-	return append(accountPrefix, bz...)
+func AccountKey(id uint64) []byte {
+	return append(accountPrefixKey, types.Uint64ToBytes(id)...)
 }
 
-func AccountNameIndexKey(name string) []byte {
+func AccountNameKey(name string) []byte {
 	return append(accountNamePrefixKey, []byte(name)...)
+}
+
+func AccountAddressKey(addr string) []byte {
+	return append(accountAddrPrefixKey, []byte(addr)...)
+}
+
+func AccountSaltKey(id uint64) []byte {
+	return append(accountSaltPrefixKey, types.Uint64ToBytes(id)...)
 }
